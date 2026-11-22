@@ -1,0 +1,157 @@
+
+Mon Espace
+Finance & Auto
+
+
+Solde Actuel DH / MAD
+0,00 DH
+
+Revenus (mois)
+0,00 DH
+
+Dépenses (mois)
+0,00 DH
+
++ Dépense
+AI
+
+Scan Facture
+
+Plein Carburant
+Mon Véhicule
+-- km
+Consommation Moy. -- L/100 km
+Prochaine Vidange -- km
+Statut Vidange -- km restants
+
+Dernières Transactions
+Voir Tout
+
+Gestion du Budget
+Ce Mois
+Revenus 0 DH
+Dépenses 0 DH
+Épargne/Reste 0 DH
+Répartition des Dépenses
+
+Tous Dépenses Revenus
+
+
+
+Dacia Sandero Stepway
+124 500 km au compteur
+⛽ Carburant 🛢️ Vidanges 🔧 Entretien
+Consommation Moy. 0 L/100 calculée entre pleins
+Coût Moyen / km 0,00 DH estimation au km
+Évolution Consommation (L/100 km)
++ Ajouter Plein
+
+Historique des Pleins
+
+État de l'Huile & Vidange
++ Nouvelle Vidange
+Dernière vidange à -- km
+Prochaine vidange à -- km
+Kilométrage Restant -- km
+
+Carnet des Vidanges
+
+Total Dépenses Entretien 0 DH
++ Ajouter Pièce
+Historique des Réparations & Pièces
+
+
+Configurer "2 clics au dos"
+iPhone Back Tap Shortcuts
+Créez un Raccourci Apple pour ouvrir directement le Scanner ou la Dépense Rapide en tapotant 2 fois le dos de votre iPhone !
+📷 Scanner Facture Direct Copier URL
+💸 Nouvelle Dépense Direct Copier URL
+⛽ Plein Carburant Direct Copier URL
+Étapes d'activation :
+	1	Ouvrez l'application Raccourcis sur votre iPhone.
+	2	Créez un raccourci qui exécute "Ouvrir l'URL" avec l'URL copié ci-dessus.
+	3	Allez dans Réglages iPhone > Accessibilité > Toucher > Toucher le dos de l'appareil.
+	4	Sélectionnez "Toucher 2 fois" et choisissez votre raccourci !
+Clé API Gemini (Optionnelle)
+Par défaut, le scanner AI utilise l'API Gemini directement. Vous pouvez renseigner votre propre clé Gemini pour des scans illimités.
+Enregistrer Clé API
+Gestion des Données
+Exporter JSON Importer JSON
+Réinitialiser les données Rétablir les données d'exemple
+Réinitialiser
+Accueil Budget
+
+Auto Réglages
+Action Rapide
+
+Nouvelle Dépense Achats, café, factures...
+
+Nouveau Revenu Salaire, virement...
+
+Scan Facture AI Lecture auto ticket
+
+Plein Carburant Calcul conso & coût
+Ajouter une Transaction
+Dépense Revenu
+Montant (DH)
+Description / Commerçant
+Catégorie
+                            🍔 Alimentation
+                            ☕ Café / Resto
+                            ⛽ Carburant
+                            🔧 Entretien Auto
+                            🛒 Courses
+                            📄 Factures
+                            🛍️ Shopping
+                            💊 Santé
+                            💰 Salaire
+                            💼 Business
+                            📦 Autre
+                        
+Date
+Enregistrer
+
+Scanner Facture (Gemini AI)
+Prendre une photo ou importer un ticket
+Accepte PNG, JPG, WebP
+
+Analyse intelligente Gemini AI en cours...
+Nouveau Plein Carburant
+Kilométrage Actuel (km)
+Litres (L)
+Prix Total (DH)
+Station
+Date
+Ajouter aussi dans le Budget ?
+Valider le Plein
+Enregistrer une Vidange
+Kilométrage Actuel
+Intervalle (km)
+Type Huile
+Coût Total (DH)
+Filtres Changés
+Filtre à Huile Filtre à Air Filtre Gasoil Filtre Habitacle
+Date
+Ajouter aussi dans le Budget ?
+Enregistrer Vidange
+Ajouter Pièce / Réparation
+Nom de la Pièce / Réparation
+Catégorie
+                            🛞 Pneus
+                            🛑 Freins
+                            🔋 Batterie
+                            🚙 Suspension
+                            ⚡ Électronique
+                            ⚙️ Moteur
+                            🔧 Autre
+                        
+Coût (DH)
+Kilométrage
+Date
+Notes / Garantie
+Ajouter aussi dans le Budget ?
+Enregistrer la Pièce
+Modifier le Véhicule
+Nom / Modèle du Véhicule
+Kilométrage Actuel (km)
+Enregistrer
