@@ -1,157 +1,1708 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Finance & Auto iOS</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        ios: {
+                            blue: '#007AFF',
+                            green: '#34C759',
+                            red: '#FF3B30',
+                            orange: '#FF9500',
+                            yellow: '#FFCC00',
+                            purple: '#AF52DE',
+                            teal: '#5AC8FA',
+                            gray: '#8E8E93',
+                            gray2: '#AEAEB2',
+                            gray3: '#C7C7CC',
+                            gray4: '#D1D1D6',
+                            gray5: '#E5E5EA',
+                            gray6: '#F2F2F7',
+                            cardLight: '#FFFFFF',
+                            cardDark: '#1C1C1E',
+                            bgLight: '#F2F2F7',
+                            bgDark: '#000000'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'SF Pro Text', 'Inter', 'Segoe UI', 'Roboto', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- FontAwesome for iOS-style icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Chart.js for sleek visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* Custom iOS Feel Adjustments */
+        body {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+        
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 1rem);
+        }
+        .pt-safe {
+            padding-top: env(safe-area-inset-top, 0.5rem);
+        }
 
-Mon Espace
-Finance & Auto
+        /* Glassmorphism effects */
+        .glass-header {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        
+        .glass-tabbar {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
 
+        /* Scrollbar hide */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-ios-bgLight dark:bg-ios-bgDark text-gray-900 dark:text-gray-100 font-sans min-h-full flex flex-col transition-colors duration-200">
 
-Solde Actuel DH / MAD
-0,00 DH
+    <!-- TOP HEADER -->
+    <header class="sticky top-0 z-30 glass-header bg-white/80 dark:bg-ios-cardDark/80 border-b border-gray-200/50 dark:border-gray-800/50 px-4 py-3 pt-safe transition-colors duration-200">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-full bg-ios-blue text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <div>
+                    <h1 class="text-xs text-gray-500 dark:text-gray-400 font-medium leading-none">Mon Espace</h1>
+                    <span id="header-user-title" class="text-base font-bold tracking-tight">Finance & Auto</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+                <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 flex items-center justify-center transition active:scale-95">
+                    <i id="theme-toggle-icon" class="fa-solid fa-moon text-base"></i>
+                </button>
+                <button onclick="openModal('modal-quick-actions')" class="w-9 h-9 rounded-full bg-ios-blue text-white flex items-center justify-center shadow-md active:scale-95 transition">
+                    <i class="fa-solid fa-bolt text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </header>
 
-Revenus (mois)
-0,00 DH
+    <!-- MAIN CONTENT CONTAINERS -->
+    <main class="flex-1 max-w-md w-full mx-auto px-4 pt-3 pb-24 space-y-4">
+        
+        <!-- SECTION 1: ACCUEIL (DASHBOARD) -->
+        <section id="tab-accueil" class="tab-content space-y-4">
+            <!-- Balance Card -->
+            <div class="bg-gradient-to-br from-ios-blue via-blue-600 to-indigo-700 rounded-3xl p-5 text-white shadow-lg relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                
+                <div class="flex justify-between items-start mb-3">
+                    <span class="text-xs uppercase tracking-wider font-semibold text-blue-100">Solde Actuel</span>
+                    <span class="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">DH / MAD</span>
+                </div>
+                
+                <div id="dash-solde" class="text-3xl font-extrabold tracking-tight mb-4">0,00 DH</div>
+                
+                <div class="grid grid-cols-2 gap-3 pt-3 border-t border-white/15 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-7 h-7 rounded-full bg-emerald-500/30 flex items-center justify-center text-emerald-300 text-xs">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-blue-100 leading-tight">Revenus (mois)</p>
+                            <p id="dash-revenus" class="font-bold text-emerald-300 text-sm">0,00 DH</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2">
+                        <div class="w-7 h-7 rounded-full bg-rose-500/30 flex items-center justify-center text-rose-300 text-xs">
+                            <i class="fa-solid fa-arrow-up"></i>
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-blue-100 leading-tight">Dépenses (mois)</p>
+                            <p id="dash-depenses" class="font-bold text-rose-300 text-sm">0,00 DH</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-Dépenses (mois)
-0,00 DH
+            <!-- Quick Action Pills -->
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="openAddTransactionModal('expense')" class="bg-white dark:bg-ios-cardDark p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80 flex flex-col items-center justify-center space-y-1 active:scale-95 transition">
+                    <div class="w-9 h-9 rounded-full bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center text-sm font-bold">
+                        <i class="fa-solid fa-minus"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">+ Dépense</span>
+                </button>
 
-+ Dépense
-AI
+                <button onclick="openModal('modal-scan')" class="bg-white dark:bg-ios-cardDark p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80 flex flex-col items-center justify-center space-y-1 active:scale-95 transition relative overflow-hidden">
+                    <div class="absolute -top-1 -right-1 bg-gradient-to-r from-amber-500 to-ios-orange text-white text-[9px] font-bold px-1.5 py-0.5 rounded-bl-lg">
+                        AI
+                    </div>
+                    <div class="w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm font-bold">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Scan Facture</span>
+                </button>
 
-Scan Facture
+                <button onclick="openModal('modal-add-fuel')" class="bg-white dark:bg-ios-cardDark p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80 flex flex-col items-center justify-center space-y-1 active:scale-95 transition">
+                    <div class="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/40 text-ios-blue flex items-center justify-center text-sm font-bold">
+                        <i class="fa-solid fa-gas-pump"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Plein Carburant</span>
+                </button>
+            </div>
 
-Plein Carburant
-Mon Véhicule
--- km
-Consommation Moy. -- L/100 km
-Prochaine Vidange -- km
-Statut Vidange -- km restants
+            <!-- Mini Car Health Widget -->
+            <div onclick="switchTab('auto')" class="bg-white dark:bg-ios-cardDark p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80 cursor-pointer active:scale-[0.99] transition">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-car text-ios-blue text-base"></i>
+                        <span id="dash-car-name" class="font-bold text-sm">Mon Véhicule</span>
+                    </div>
+                    <span id="dash-car-km" class="text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-lg">-- km</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-2 my-2 text-xs">
+                    <div class="bg-gray-50 dark:bg-gray-800/60 p-2.5 rounded-xl">
+                        <span class="text-gray-500 dark:text-gray-400 text-[11px] block">Consommation Moy.</span>
+                        <span id="dash-car-conso" class="font-bold text-sm text-gray-800 dark:text-gray-200">-- L/100 km</span>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-800/60 p-2.5 rounded-xl">
+                        <span class="text-gray-500 dark:text-gray-400 text-[11px] block">Prochaine Vidange</span>
+                        <span id="dash-car-next-vidange" class="font-bold text-sm text-gray-800 dark:text-gray-200">-- km</span>
+                    </div>
+                </div>
 
-Dernières Transactions
-Voir Tout
+                <!-- Next Vidange Alert Progress -->
+                <div class="mt-2">
+                    <div class="flex justify-between text-[10px] font-semibold mb-1">
+                        <span id="dash-vidange-status-text" class="text-gray-500">Statut Vidange</span>
+                        <span id="dash-vidange-remaining-text">-- km restants</span>
+                    </div>
+                    <div class="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                        <div id="dash-vidange-progress-bar" class="h-full bg-ios-green rounded-full transition-all duration-500" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
 
-Gestion du Budget
-Ce Mois
-Revenus 0 DH
-Dépenses 0 DH
-Épargne/Reste 0 DH
-Répartition des Dépenses
+            <!-- Recent Transactions List -->
+            <div class="bg-white dark:bg-ios-cardDark rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800/80">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="font-bold text-sm text-gray-800 dark:text-gray-200">Dernières Transactions</h2>
+                    <button onclick="switchTab('budget')" class="text-xs text-ios-blue font-semibold">Voir Tout</button>
+                </div>
+                
+                <div id="dash-recent-list" class="space-y-3">
+                    <!-- Dynamic rendering -->
+                </div>
+            </div>
+        </section>
 
-Tous Dépenses Revenus
+        <!-- SECTION 2: BUDGET & GESTION D'ARGENT -->
+        <section id="tab-budget" class="tab-content hidden space-y-4">
+            <!-- Filter & Summary Bar -->
+            <div class="bg-white dark:bg-ios-cardDark p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80 space-y-3">
+                <div class="flex justify-between items-center">
+                    <h2 class="font-bold text-base">Gestion du Budget</h2>
+                    <span id="budget-current-month" class="text-xs font-semibold text-ios-blue bg-blue-50 dark:bg-blue-950/50 px-2.5 py-1 rounded-full">Ce Mois</span>
+                </div>
 
+                <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                    <div class="p-2 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl">
+                        <span class="text-gray-500 text-[10px] block">Revenus</span>
+                        <span id="budget-total-income" class="font-bold text-emerald-600 dark:text-emerald-400">0 DH</span>
+                    </div>
+                    <div class="p-2 bg-rose-50 dark:bg-rose-950/30 rounded-xl">
+                        <span class="text-gray-500 text-[10px] block">Dépenses</span>
+                        <span id="budget-total-expense" class="font-bold text-rose-600 dark:text-rose-400">0 DH</span>
+                    </div>
+                    <div class="p-2 bg-blue-50 dark:bg-blue-950/30 rounded-xl">
+                        <span class="text-gray-500 text-[10px] block">Épargne/Reste</span>
+                        <span id="budget-total-savings" class="font-bold text-ios-blue">0 DH</span>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Category Chart Card -->
+            <div class="bg-white dark:bg-ios-cardDark p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80">
+                <h3 class="font-bold text-sm mb-3 text-gray-800 dark:text-gray-200">Répartition des Dépenses</h3>
+                <div class="relative h-48 w-full flex items-center justify-center">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
 
-Dacia Sandero Stepway
-124 500 km au compteur
-⛽ Carburant 🛢️ Vidanges 🔧 Entretien
-Consommation Moy. 0 L/100 calculée entre pleins
-Coût Moyen / km 0,00 DH estimation au km
-Évolution Consommation (L/100 km)
-+ Ajouter Plein
+            <!-- Transaction Filters & List -->
+            <div class="bg-white dark:bg-ios-cardDark p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80 space-y-3">
+                <div class="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-xl">
+                    <button onclick="filterTransactions('all')" id="filter-btn-all" class="flex-1 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-gray-700 shadow-sm transition">Tous</button>
+                    <button onclick="filterTransactions('expense')" id="filter-btn-expense" class="flex-1 py-1.5 text-xs font-semibold text-gray-500 rounded-lg transition">Dépenses</button>
+                    <button onclick="filterTransactions('income')" id="filter-btn-income" class="flex-1 py-1.5 text-xs font-semibold text-gray-500 rounded-lg transition">Revenus</button>
+                </div>
 
-Historique des Pleins
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-gray-400"></i>
+                    <input type="text" id="transaction-search" oninput="renderTransactionsList()" placeholder="Rechercher une transaction..." class="w-full bg-gray-50 dark:bg-gray-800/80 border-0 pl-8 pr-3 py-1.5 rounded-xl text-xs focus:ring-2 focus:ring-ios-blue outline-none">
+                </div>
 
-État de l'Huile & Vidange
-+ Nouvelle Vidange
-Dernière vidange à -- km
-Prochaine vidange à -- km
-Kilométrage Restant -- km
+                <div id="full-transactions-list" class="space-y-3 pt-1">
+                    <!-- Rendered dynamically -->
+                </div>
+            </div>
+        </section>
 
-Carnet des Vidanges
+        <!-- SECTION 3: SUIVI AUTOMOBILE (AUTO) -->
+        <section id="tab-auto" class="tab-content hidden space-y-4">
+            <!-- Vehicle Header Info -->
+            <div class="bg-white dark:bg-ios-cardDark p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-ios-blue flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-car-side"></i>
+                    </div>
+                    <div>
+                        <h2 id="auto-vehicule-name" class="font-bold text-base">Dacia Sandero Stepway</h2>
+                        <p id="auto-vehicule-km" class="text-xs text-gray-500 dark:text-gray-400">124 500 km au compteur</p>
+                    </div>
+                </div>
+                <button onclick="openEditCarModal()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 flex items-center justify-center text-xs active:scale-95">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+            </div>
 
-Total Dépenses Entretien 0 DH
-+ Ajouter Pièce
-Historique des Réparations & Pièces
+            <!-- Auto Sub-Tabs Header (iOS Segmented Style) -->
+            <div class="bg-gray-200/70 dark:bg-gray-800 p-1 rounded-xl flex space-x-1">
+                <button onclick="switchAutoSubTab('carburant')" id="autotab-carburant-btn" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-gray-700 shadow-sm transition">⛽ Carburant</button>
+                <button onclick="switchAutoSubTab('vidanges')" id="autotab-vidanges-btn" class="flex-1 py-1.5 text-xs font-bold text-gray-500 rounded-lg transition">🛢️ Vidanges</button>
+                <button onclick="switchAutoSubTab('pieces')" id="autotab-pieces-btn" class="flex-1 py-1.5 text-xs font-bold text-gray-500 rounded-lg transition">🔧 Entretien</button>
+            </div>
 
+            <!-- SUB-TAB 1: CARBURANT -->
+            <div id="subtab-carburant" class="auto-subtab space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white dark:bg-ios-cardDark p-3.5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80">
+                        <span class="text-xs text-gray-500 block">Consommation Moy.</span>
+                        <span id="fuel-avg-conso" class="text-lg font-extrabold text-ios-blue">0 L/100</span>
+                        <span class="text-[10px] text-gray-400 block mt-0.5">calculée entre pleins</span>
+                    </div>
+                    <div class="bg-white dark:bg-ios-cardDark p-3.5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80">
+                        <span class="text-xs text-gray-500 block">Coût Moyen / km</span>
+                        <span id="fuel-cost-per-km" class="text-lg font-extrabold text-amber-600 dark:text-amber-400">0,00 DH</span>
+                        <span class="text-[10px] text-gray-400 block mt-0.5">estimation au km</span>
+                    </div>
+                </div>
 
-Configurer "2 clics au dos"
-iPhone Back Tap Shortcuts
-Créez un Raccourci Apple pour ouvrir directement le Scanner ou la Dépense Rapide en tapotant 2 fois le dos de votre iPhone !
-📷 Scanner Facture Direct Copier URL
-💸 Nouvelle Dépense Direct Copier URL
-⛽ Plein Carburant Direct Copier URL
-Étapes d'activation :
-	1	Ouvrez l'application Raccourcis sur votre iPhone.
-	2	Créez un raccourci qui exécute "Ouvrir l'URL" avec l'URL copié ci-dessus.
-	3	Allez dans Réglages iPhone > Accessibilité > Toucher > Toucher le dos de l'appareil.
-	4	Sélectionnez "Toucher 2 fois" et choisissez votre raccourci !
-Clé API Gemini (Optionnelle)
-Par défaut, le scanner AI utilise l'API Gemini directement. Vous pouvez renseigner votre propre clé Gemini pour des scans illimités.
-Enregistrer Clé API
-Gestion des Données
-Exporter JSON Importer JSON
-Réinitialiser les données Rétablir les données d'exemple
-Réinitialiser
-Accueil Budget
+                <div class="bg-white dark:bg-ios-cardDark p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-xs text-gray-700 dark:text-gray-300">Évolution Consommation (L/100 km)</h3>
+                        <button onclick="openModal('modal-add-fuel')" class="text-xs font-bold text-ios-blue">+ Ajouter Plein</button>
+                    </div>
+                    <div class="h-40 w-full">
+                        <canvas id="fuelTrendChart"></canvas>
+                    </div>
+                </div>
 
-Auto Réglages
-Action Rapide
+                <div class="bg-white dark:bg-ios-cardDark p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80 space-y-3">
+                    <h3 class="font-bold text-sm">Historique des Pleins</h3>
+                    <div id="fuel-history-list" class="space-y-3">
+                        <!-- Dynamic rendering -->
+                    </div>
+                </div>
+            </div>
 
-Nouvelle Dépense Achats, café, factures...
+            <!-- SUB-TAB 2: VIDANGES -->
+            <div id="subtab-vidanges" class="auto-subtab hidden space-y-4">
+                <!-- Vidange Alert Status Box -->
+                <div id="vidange-alert-box" class="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-2xl space-y-2">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-2">
+                            <i id="vidange-alert-icon" class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+                            <span class="font-bold text-sm">État de l'Huile & Vidange</span>
+                        </div>
+                        <button onclick="openModal('modal-add-vidange')" class="bg-ios-blue text-white text-xs font-semibold px-3 py-1 rounded-xl shadow-sm">
+                            + Nouvelle Vidange
+                        </button>
+                    </div>
 
-Nouveau Revenu Salaire, virement...
+                    <div class="grid grid-cols-2 gap-2 pt-1 text-xs">
+                        <div>
+                            <span class="text-gray-500 text-[11px] block">Dernière vidange à</span>
+                            <span id="vidange-last-km" class="font-bold text-sm">-- km</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500 text-[11px] block">Prochaine vidange à</span>
+                            <span id="vidange-target-km" class="font-bold text-sm">-- km</span>
+                        </div>
+                    </div>
 
-Scan Facture AI Lecture auto ticket
+                    <div class="pt-2">
+                        <div class="flex justify-between text-xs font-semibold mb-1">
+                            <span class="text-gray-600 dark:text-gray-400">Kilométrage Restant</span>
+                            <span id="vidange-remaining-badge" class="font-bold text-emerald-600 dark:text-emerald-400">-- km</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+                            <div id="vidange-bar" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
 
-Plein Carburant Calcul conso & coût
-Ajouter une Transaction
-Dépense Revenu
-Montant (DH)
-Description / Commerçant
-Catégorie
-                            🍔 Alimentation
-                            ☕ Café / Resto
-                            ⛽ Carburant
-                            🔧 Entretien Auto
-                            🛒 Courses
-                            📄 Factures
-                            🛍️ Shopping
-                            💊 Santé
-                            💰 Salaire
-                            💼 Business
-                            📦 Autre
-                        
-Date
-Enregistrer
+                <div class="bg-white dark:bg-ios-cardDark p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80 space-y-3">
+                    <h3 class="font-bold text-sm">Carnet des Vidanges</h3>
+                    <div id="vidanges-list" class="space-y-3">
+                        <!-- Dynamic rendering -->
+                    </div>
+                </div>
+            </div>
 
-Scanner Facture (Gemini AI)
-Prendre une photo ou importer un ticket
-Accepte PNG, JPG, WebP
+            <!-- SUB-TAB 3: PIÈCES & REPARATION -->
+            <div id="subtab-pieces" class="auto-subtab hidden space-y-4">
+                <div class="bg-white dark:bg-ios-cardDark p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80 flex justify-between items-center">
+                    <div>
+                        <span class="text-xs text-gray-500 block">Total Dépenses Entretien</span>
+                        <span id="total-maintenance-cost" class="text-xl font-extrabold text-rose-600 dark:text-rose-400">0 DH</span>
+                    </div>
+                    <button onclick="openModal('modal-add-piece')" class="bg-ios-blue text-white text-xs font-bold px-3 py-2 rounded-xl shadow-sm active:scale-95 transition">
+                        + Ajouter Pièce
+                    </button>
+                </div>
 
-Analyse intelligente Gemini AI en cours...
-Nouveau Plein Carburant
-Kilométrage Actuel (km)
-Litres (L)
-Prix Total (DH)
-Station
-Date
-Ajouter aussi dans le Budget ?
-Valider le Plein
-Enregistrer une Vidange
-Kilométrage Actuel
-Intervalle (km)
-Type Huile
-Coût Total (DH)
-Filtres Changés
-Filtre à Huile Filtre à Air Filtre Gasoil Filtre Habitacle
-Date
-Ajouter aussi dans le Budget ?
-Enregistrer Vidange
-Ajouter Pièce / Réparation
-Nom de la Pièce / Réparation
-Catégorie
-                            🛞 Pneus
-                            🛑 Freins
-                            🔋 Batterie
-                            🚙 Suspension
-                            ⚡ Électronique
-                            ⚙️ Moteur
-                            🔧 Autre
-                        
-Coût (DH)
-Kilométrage
-Date
-Notes / Garantie
-Ajouter aussi dans le Budget ?
-Enregistrer la Pièce
-Modifier le Véhicule
-Nom / Modèle du Véhicule
-Kilométrage Actuel (km)
-Enregistrer
+                <div class="bg-white dark:bg-ios-cardDark p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80 space-y-3">
+                    <h3 class="font-bold text-sm">Historique des Réparations & Pièces</h3>
+                    <div id="pieces-list" class="space-y-3">
+                        <!-- Dynamic rendering -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: RÉGLAGES & RACCOURCIS IPHONE -->
+        <section id="tab-reglages" class="tab-content hidden space-y-4">
+            <!-- iOS Back Tap Shortcut Instructions Card -->
+            <div class="bg-gradient-to-br from-gray-900 to-black text-white p-5 rounded-3xl shadow-lg border border-gray-800 space-y-3">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-2xl bg-ios-blue text-white flex items-center justify-center text-xl font-bold shadow-sm">
+                        <i class="fa-solid fa-hand-pointer"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-base leading-tight">Configurer "2 clics au dos"</h2>
+                        <p class="text-xs text-gray-400">iPhone Back Tap Shortcuts</p>
+                    </div>
+                </div>
+
+                <p class="text-xs text-gray-300 leading-relaxed">
+                    Créez un Raccourci Apple pour ouvrir directement le Scanner ou la Dépense Rapide en tapotant 2 fois le dos de votre iPhone !
+                </p>
+
+                <div class="space-y-2 pt-2 text-xs">
+                    <div class="p-2.5 bg-white/10 rounded-xl flex justify-between items-center">
+                        <span class="font-medium text-gray-200">📷 Scanner Facture Direct</span>
+                        <button onclick="copyShortcutUrl('scan')" class="bg-ios-blue text-white px-2.5 py-1 rounded-lg text-[11px] font-bold">Copier URL</button>
+                    </div>
+                    <div class="p-2.5 bg-white/10 rounded-xl flex justify-between items-center">
+                        <span class="font-medium text-gray-200">💸 Nouvelle Dépense Direct</span>
+                        <button onclick="copyShortcutUrl('add')" class="bg-ios-blue text-white px-2.5 py-1 rounded-lg text-[11px] font-bold">Copier URL</button>
+                    </div>
+                    <div class="p-2.5 bg-white/10 rounded-xl flex justify-between items-center">
+                        <span class="font-medium text-gray-200">⛽ Plein Carburant Direct</span>
+                        <button onclick="copyShortcutUrl('fuel')" class="bg-ios-blue text-white px-2.5 py-1 rounded-lg text-[11px] font-bold">Copier URL</button>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 p-3 rounded-2xl space-y-1.5 text-[11px] text-gray-300">
+                    <p class="font-bold text-amber-400"><i class="fa-solid fa-circle-info mr-1"></i> Étapes d'activation :</p>
+                    <ol class="list-decimal list-inside space-y-1 text-gray-400">
+                        <li>Ouvrez l'application <b>Raccourcis</b> sur votre iPhone.</li>
+                        <li>Créez un raccourci qui exécute <b>"Ouvrir l'URL"</b> avec l'URL copié ci-dessus.</li>
+                        <li>Allez dans <b>Réglages iPhone > Accessibilité > Toucher > Toucher le dos de l'appareil</b>.</li>
+                        <li>Sélectionnez <b>"Toucher 2 fois"</b> et choisissez votre raccourci !</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Gemini API Key configuration card -->
+            <div class="bg-white dark:bg-ios-cardDark p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80 space-y-3">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-key text-ios-blue"></i>
+                    <h3 class="font-bold text-sm">Clé API Gemini (Optionnelle)</h3>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                    Par défaut, le scanner AI utilise l'API Gemini directement. Vous pouvez renseigner votre propre clé Gemini pour des scans illimités.
+                </p>
+                <input type="password" id="custom-api-key" placeholder="Entrer Clé API Gemini (facultatif)" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-ios-blue">
+                <button onclick="saveApiKey()" class="w-full bg-ios-blue text-white py-2 rounded-xl text-xs font-bold">Enregistrer Clé API</button>
+            </div>
+
+            <!-- Data Management Card -->
+            <div class="bg-white dark:bg-ios-cardDark p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800/80 space-y-3">
+                <h3 class="font-bold text-sm">Gestion des Données</h3>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <button onclick="exportDataJSON()" class="p-2.5 border border-gray-200 dark:border-gray-700 rounded-xl font-semibold flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-download text-ios-blue"></i>
+                        <span>Exporter JSON</span>
+                    </button>
+                    <label class="p-2.5 border border-gray-200 dark:border-gray-700 rounded-xl font-semibold flex items-center justify-center space-x-2 cursor-pointer">
+                        <i class="fa-solid fa-upload text-emerald-500"></i>
+                        <span>Importer JSON</span>
+                        <input type="file" id="import-json-file" accept=".json" onchange="importDataJSON(event)" class="hidden">
+                    </label>
+                </div>
+
+                <div class="pt-2 border-t border-gray-100 dark:border-gray-800 flex justify-between items-center">
+                    <div>
+                        <span class="text-xs font-bold text-rose-600 block">Réinitialiser les données</span>
+                        <span class="text-[11px] text-gray-400">Rétablir les données d'exemple</span>
+                    </div>
+                    <button onclick="resetToSampleData()" class="bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-xs font-bold px-3 py-1.5 rounded-xl">Réinitialiser</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FIXED BOTTOM TAB BAR (iOS NATIVE LOOK) -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 glass-tabbar bg-white/90 dark:bg-ios-cardDark/90 border-t border-gray-200/60 dark:border-gray-800/60 pb-safe">
+        <div class="max-w-md mx-auto flex items-center justify-around h-14 relative px-2">
+            
+            <button onclick="switchTab('accueil')" id="nav-accueil" class="tab-btn flex flex-col items-center justify-center w-14 text-ios-blue">
+                <i class="fa-solid fa-house text-lg mb-0.5"></i>
+                <span class="text-[10px] font-semibold">Accueil</span>
+            </button>
+
+            <button onclick="switchTab('budget')" id="nav-budget" class="tab-btn flex flex-col items-center justify-center w-14 text-gray-400 dark:text-gray-500">
+                <i class="fa-solid fa-chart-pie text-lg mb-0.5"></i>
+                <span class="text-[10px] font-semibold">Budget</span>
+            </button>
+
+            <!-- Floating Central "+" Button -->
+            <div class="relative -top-5">
+                <button onclick="openModal('modal-quick-actions')" class="w-13 h-13 rounded-full bg-ios-blue text-white flex items-center justify-center text-xl shadow-lg shadow-blue-500/40 active:scale-90 transition">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+
+            <button onclick="switchTab('auto')" id="nav-auto" class="tab-btn flex flex-col items-center justify-center w-14 text-gray-400 dark:text-gray-500">
+                <i class="fa-solid fa-car text-lg mb-0.5"></i>
+                <span class="text-[10px] font-semibold">Auto</span>
+            </button>
+
+            <button onclick="switchTab('reglages')" id="nav-reglages" class="tab-btn flex flex-col items-center justify-center w-14 text-gray-400 dark:text-gray-500">
+                <i class="fa-solid fa-gear text-lg mb-0.5"></i>
+                <span class="text-[10px] font-semibold">Réglages</span>
+            </button>
+
+        </div>
+    </nav>
+
+    <!-- ==================== MODALS & ACTION SHEETS ==================== -->
+
+    <!-- MODAL 1: QUICK ACTION SHEET (Central + Button) -->
+    <div id="modal-quick-actions" class="modal-backdrop fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-end sm:items-center justify-center transition-opacity">
+        <div class="bg-white dark:bg-ios-cardDark w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-3 transform transition-transform shadow-2xl border border-gray-100 dark:border-gray-800">
+            <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-3">
+                <h3 class="font-bold text-base">Action Rapide</h3>
+                <button onclick="closeModal('modal-quick-actions')" class="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-1">
+                <button onclick="closeModal('modal-quick-actions'); openAddTransactionModal('expense');" class="p-4 bg-rose-50 dark:bg-rose-950/30 rounded-2xl text-left border border-rose-100 dark:border-rose-900/30 active:scale-95 transition">
+                    <div class="w-8 h-8 rounded-full bg-rose-500 text-white flex items-center justify-center text-sm mb-2">
+                        <i class="fa-solid fa-minus"></i>
+                    </div>
+                    <span class="font-bold text-sm block text-rose-700 dark:text-rose-300">Nouvelle Dépense</span>
+                    <span class="text-[11px] text-gray-500">Achats, café, factures...</span>
+                </button>
+
+                <button onclick="closeModal('modal-quick-actions'); openAddTransactionModal('income');" class="p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-2xl text-left border border-emerald-100 dark:border-emerald-900/30 active:scale-95 transition">
+                    <div class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center text-sm mb-2">
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+                    <span class="font-bold text-sm block text-emerald-700 dark:text-emerald-300">Nouveau Revenu</span>
+                    <span class="text-[11px] text-gray-500">Salaire, virement...</span>
+                </button>
+
+                <button onclick="closeModal('modal-quick-actions'); openModal('modal-scan');" class="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-2xl text-left border border-amber-100 dark:border-amber-900/30 active:scale-95 transition">
+                    <div class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm mb-2">
+                        <i class="fa-solid fa-camera"></i>
+                    </div>
+                    <span class="font-bold text-sm block text-amber-700 dark:text-amber-300">Scan Facture AI</span>
+                    <span class="text-[11px] text-gray-500">Lecture auto ticket</span>
+                </button>
+
+                <button onclick="closeModal('modal-quick-actions'); openModal('modal-add-fuel');" class="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-2xl text-left border border-blue-100 dark:border-blue-900/30 active:scale-95 transition">
+                    <div class="w-8 h-8 rounded-full bg-ios-blue text-white flex items-center justify-center text-sm mb-2">
+                        <i class="fa-solid fa-gas-pump"></i>
+                    </div>
+                    <span class="font-bold text-sm block text-blue-700 dark:text-blue-300">Plein Carburant</span>
+                    <span class="text-[11px] text-gray-500">Calcul conso & coût</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ADD / EDIT TRANSACTION -->
+    <div id="modal-transaction" class="modal-backdrop fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-end sm:items-center justify-center">
+        <div class="bg-white dark:bg-ios-cardDark w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-3">
+                <h3 id="modal-tx-title" class="font-bold text-base">Ajouter une Transaction</h3>
+                <button onclick="closeModal('modal-transaction')" class="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="form-transaction" onsubmit="saveTransaction(event)" class="space-y-3">
+                <input type="hidden" id="tx-id">
+                
+                <div class="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl">
+                    <button type="button" onclick="setTxType('expense')" id="tx-type-expense-btn" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-gray-700 shadow-sm transition">Dépense</button>
+                    <button type="button" onclick="setTxType('income')" id="tx-type-income-btn" class="flex-1 py-1.5 text-xs font-bold text-gray-500 rounded-lg transition">Revenu</button>
+                </div>
+                <input type="hidden" id="tx-type" value="expense">
+
+                <div>
+                    <label class="text-[11px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Montant (DH)</label>
+                    <input type="number" step="0.01" id="tx-amount" required placeholder="0.00" class="w-full text-2xl font-extrabold bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl outline-none focus:ring-2 focus:ring-ios-blue">
+                </div>
+
+                <div>
+                    <label class="text-[11px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Description / Commerçant</label>
+                    <input type="text" id="tx-desc" required placeholder="ex: Marjane, Afriquia, Café Central..." class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-ios-blue">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[11px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Catégorie</label>
+                        <select id="tx-category" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-ios-blue">
+                            <option value="Alimentation">🍔 Alimentation</option>
+                            <option value="Café/Resto">☕ Café / Resto</option>
+                            <option value="Carburant">⛽ Carburant</option>
+                            <option value="Entretien Auto">🔧 Entretien Auto</option>
+                            <option value="Courses">🛒 Courses</option>
+                            <option value="Factures">📄 Factures</option>
+                            <option value="Shopping">🛍️ Shopping</option>
+                            <option value="Santé">💊 Santé</option>
+                            <option value="Salaire">💰 Salaire</option>
+                            <option value="Business">💼 Business</option>
+                            <option value="Autre">📦 Autre</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="text-[11px] font-bold uppercase tracking-wider text-gray-400 block mb-1">Date</label>
+                        <input type="date" id="tx-date" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-2 rounded-xl text-xs outline-none focus:ring-2 focus:ring-ios-blue">
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-ios-blue text-white py-3 rounded-xl font-bold text-sm shadow-md active:scale-98 transition">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: AI RECEIPT SCANNER -->
+    <div id="modal-scan" class="modal-backdrop fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-end sm:items-center justify-center">
+        <div class="bg-white dark:bg-ios-cardDark w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-3">
+                <div class="flex items-center space-x-2">
+                    <div class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h3 class="font-bold text-base">Scanner Facture (Gemini AI)</h3>
+                </div>
+                <button onclick="closeModal('modal-scan')" class="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <div id="scan-dropzone" onclick="document.getElementById('receipt-input').click()" class="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-6 text-center cursor-pointer hover:border-ios-blue transition">
+                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-ios-blue mb-2"></i>
+                    <p class="text-xs font-bold">Prendre une photo ou importer un ticket</p>
+                    <p class="text-[10px] text-gray-400 mt-1">Accepte PNG, JPG, WebP</p>
+                    <input type="file" id="receipt-input" accept="image/*" capture="environment" onchange="handleReceiptImage(event)" class="hidden">
+                </div>
+
+                <div id="scan-preview-container" class="hidden space-y-3">
+                    <div class="relative rounded-2xl overflow-hidden max-h-48 bg-black flex items-center justify-center">
+                        <img id="scan-preview-img" src="" class="max-h-48 object-contain">
+                    </div>
+
+                    <div id="scan-loading" class="hidden flex items-center justify-center space-x-2 p-3 bg-blue-50 dark:bg-blue-950/40 rounded-xl text-ios-blue text-xs font-bold">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        <span>Analyse intelligente Gemini AI en cours...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: ADD FUEL FILL-UP -->
+    <div id="modal-add-fuel" class="modal-backdrop fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-end sm:items-center justify-center">
+        <div class="bg-white dark:bg-ios-cardDark w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-3">
+                <h3 class="font-bold text-base">Nouveau Plein Carburant</h3>
+                <button onclick="closeModal('modal-add-fuel')" class="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form onsubmit="saveFuelFillup(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Kilométrage Actuel (km)</label>
+                    <input type="number" id="fuel-km" required placeholder="ex: 124500" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-ios-blue">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Litres (L)</label>
+                        <input type="number" step="0.01" id="fuel-liters" required placeholder="ex: 42.5" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-ios-blue">
+                    </div>
+                    <div>
+                        <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Prix Total (DH)</label>
+                        <input type="number" step="0.01" id="fuel-price" required placeholder="ex: 520.00" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-ios-blue">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Station</label>
+                        <input type="text" id="fuel-station" placeholder="Afriquia, Total, Shell..." class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl outline-none focus:ring-2 focus:ring-ios-blue">
+                    </div>
+                    <div>
+                        <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Date</label>
+                        <input type="date" id="fuel-date" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-2 rounded-xl outline-none focus:ring-2 focus:ring-ios-blue">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between p-2.5 bg-gray-50 dark:bg-gray-800/60 rounded-xl">
+                    <span class="font-bold text-gray-700 dark:text-gray-300">Ajouter aussi dans le Budget ?</span>
+                    <input type="checkbox" id="fuel-sync-budget" checked class="w-4 h-4 accent-ios-blue">
+                </div>
+
+                <button type="submit" class="w-full bg-ios-blue text-white py-3 rounded-xl font-bold text-sm shadow-md active:scale-98 transition">Valider le Plein</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 5: ADD VIDANGE -->
+    <div id="modal-add-vidange" class="modal-backdrop fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-end sm:items-center justify-center">
+        <div class="bg-white dark:bg-ios-cardDark w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-3">
+                <h3 class="font-bold text-base">Enregistrer une Vidange</h3>
+                <button onclick="closeModal('modal-add-vidange')" class="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form onsubmit="saveVidange(event)" class="space-y-3 text-xs">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Kilométrage Actuel</label>
+                        <input type="number" id="vid-km" required placeholder="ex: 120000" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl text-sm font-bold outline-none">
+                    </div>
+                    <div>
+                        <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Intervalle (km)</label>
+                        <input type="number" id="vid-interval" value="10000" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl text-sm font-bold outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Type Huile</label>
+                        <input type="text" id="vid-oil-type" placeholder="5W30 Synthetique..." class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl outline-none">
+                    </div>
+                    <div>
+                        <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Coût Total (DH)</label>
+                        <input type="number" step="0.01" id="vid-cost" required placeholder="450.00" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl font-bold outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Filtres Changés</label>
+                    <div class="grid grid-cols-2 gap-2 bg-gray-50 dark:bg-gray-800/60 p-2.5 rounded-xl">
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="vid-f-huile" checked class="accent-ios-blue"> <span>Filtre à Huile</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="vid-f-air" checked class="accent-ios-blue"> <span>Filtre à Air</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="vid-f-gasoil" class="accent-ios-blue"> <span>Filtre Gasoil</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="vid-f-habitacle" class="accent-ios-blue"> <span>Filtre Habitacle</span></label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Date</label>
+                    <input type="date" id="vid-date" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-2 rounded-xl outline-none">
+                </div>
+
+                <div class="flex items-center justify-between p-2.5 bg-gray-50 dark:bg-gray-800/60 rounded-xl">
+                    <span class="font-bold text-gray-700 dark:text-gray-300">Ajouter aussi dans le Budget ?</span>
+                    <input type="checkbox" id="vid-sync-budget" checked class="w-4 h-4 accent-ios-blue">
+                </div>
+
+                <button type="submit" class="w-full bg-ios-blue text-white py-3 rounded-xl font-bold text-sm shadow-md active:scale-98 transition">Enregistrer Vidange</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 6: ADD PIECE / REPAIR -->
+    <div id="modal-add-piece" class="modal-backdrop fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-end sm:items-center justify-center">
+        <div class="bg-white dark:bg-ios-cardDark w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-3">
+                <h3 class="font-bold text-base">Ajouter Pièce / Réparation</h3>
+                <button onclick="closeModal('modal-add-piece')" class="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form onsubmit="savePiece(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Nom de la Pièce / Réparation</label>
+                    <input type="text" id="piece-name" required placeholder="ex: Changement Pneus Avant, Plaquettes..." class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl font-bold outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Catégorie</label>
+                        <select id="piece-category" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-2 rounded-xl outline-none">
+                            <option value="Pneus">🛞 Pneus</option>
+                            <option value="Freins">🛑 Freins</option>
+                            <option value="Batterie">🔋 Batterie</option>
+                            <option value="Suspension">🚙 Suspension</option>
+                            <option value="Électronique">⚡ Électronique</option>
+                            <option value="Moteur">⚙️ Moteur</option>
+                            <option value="Autre">🔧 Autre</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Coût (DH)</label>
+                        <input type="number" step="0.01" id="piece-cost" required placeholder="1200.00" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl font-bold outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Kilométrage</label>
+                        <input type="number" id="piece-km" placeholder="122000" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl outline-none">
+                    </div>
+                    <div>
+                        <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Date</label>
+                        <input type="date" id="piece-date" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-2 rounded-xl outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Notes / Garantie</label>
+                    <input type="text" id="piece-notes" placeholder="Garantie 2 ans, Marque Michelin..." class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl outline-none">
+                </div>
+
+                <div class="flex items-center justify-between p-2.5 bg-gray-50 dark:bg-gray-800/60 rounded-xl">
+                    <span class="font-bold text-gray-700 dark:text-gray-300">Ajouter aussi dans le Budget ?</span>
+                    <input type="checkbox" id="piece-sync-budget" checked class="w-4 h-4 accent-ios-blue">
+                </div>
+
+                <button type="submit" class="w-full bg-ios-blue text-white py-3 rounded-xl font-bold text-sm shadow-md active:scale-98 transition">Enregistrer la Pièce</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 7: EDIT CAR INFO -->
+    <div id="modal-edit-car" class="modal-backdrop fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-end sm:items-center justify-center">
+        <div class="bg-white dark:bg-ios-cardDark w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-3">
+                <h3 class="font-bold text-base">Modifier le Véhicule</h3>
+                <button onclick="closeModal('modal-edit-car')" class="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form onsubmit="saveCarInfo(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Nom / Modèle du Véhicule</label>
+                    <input type="text" id="edit-car-name" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl font-bold outline-none">
+                </div>
+                <div>
+                    <label class="font-bold uppercase tracking-wider text-gray-400 block mb-1">Kilométrage Actuel (km)</label>
+                    <input type="number" id="edit-car-km" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 py-2 rounded-xl font-bold outline-none">
+                </div>
+                <button type="submit" class="w-full bg-ios-blue text-white py-3 rounded-xl font-bold text-sm shadow-md transition">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        // ==================== STATE MANAGEMENT ====================
+        const DEFAULT_DATA = {
+            car: {
+                name: "Dacia Sandero Stepway",
+                currentKm: 124500
+            },
+            transactions: [
+                { id: "tx_1", type: "income", amount: 15000, desc: "Salaire Mensuel", category: "Salaire", date: "2026-11-01" },
+                { id: "tx_2", type: "expense", amount: 520, desc: "Plein Carburant Afriquia", category: "Carburant", date: "2026-11-18" },
+                { id: "tx_3", type: "expense", amount: 450, desc: "Achat Marjane", category: "Alimentation", date: "2026-11-19" },
+                { id: "tx_4", type: "expense", amount: 65, desc: "Café Central", category: "Café/Resto", date: "2026-11-20" },
+                { id: "tx_5", type: "expense", amount: 480, desc: "Vidange Huile 5W30 + Filtres", category: "Entretien Auto", date: "2026-11-10" }
+            ],
+            fuelLogs: [
+                { id: "f_1", km: 123800, liters: 41.5, price: 510, station: "Afriquia", date: "2026-11-02" },
+                { id: "f_2", km: 124500, liters: 42.0, price: 520, station: "Shell", date: "2026-11-18" }
+            ],
+            vidanges: [
+                { id: "v_1", km: 120000, nextIntervalKm: 10000, oilType: "5W30 Synthétique", cost: 480, filters: { huile: true, air: true, gasoil: false, habitacle: true }, date: "2026-08-15" }
+            ],
+            pieces: [
+                { id: "p_1", name: "Changement 2 Pneus Avant Michelin", category: "Pneus", cost: 1400, km: 115000, date: "2026-04-10", notes: "Garantie 2 ans" },
+                { id: "p_2", name: "Batterie Bosch 12V", category: "Batterie", cost: 850, km: 110000, date: "2026-01-20", notes: "Garantie 1 an" }
+            ]
+        };
+
+        let appState = JSON.parse(localStorage.getItem('ios_app_data')) || DEFAULT_DATA;
+        let categoryChartInstance = null;
+        let fuelChartInstance = null;
+        let currentFilterType = 'all';
+
+        // ==================== INITIALIZATION ====================
+        window.addEventListener('DOMContentLoaded', () => {
+            initAppTheme();
+            renderAll();
+            handleUrlParameters();
+
+            // Default dates in forms
+            const todayStr = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('input[type="date"]').forEach(el => el.value = todayStr);
+        });
+
+        function saveState() {
+            localStorage.setItem('ios_app_data', JSON.stringify(appState));
+            renderAll();
+        }
+
+        function renderAll() {
+            renderDashboard();
+            renderBudgetTab();
+            renderAutoTab();
+        }
+
+        // ==================== URL ACTIONS (FOR IPHONE BACK TAP 2 CLICS) ====================
+        function handleUrlParameters() {
+            const params = new URLSearchParams(window.location.search);
+            const action = params.get('action');
+
+            if (action === 'add') {
+                setTimeout(() => openAddTransactionModal('expense'), 300);
+            } else if (action === 'scan') {
+                setTimeout(() => openModal('modal-scan'), 300);
+            } else if (action === 'fuel') {
+                setTimeout(() => openModal('modal-add-fuel'), 300);
+            }
+        }
+
+        function copyShortcutUrl(actionParam) {
+            const baseUrl = window.location.href.split('?')[0];
+            const fullUrl = `${baseUrl}?action=${actionParam}`;
+
+            // execCommand copy fallback
+            const tempInput = document.createElement('input');
+            tempInput.value = fullUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            alert(`URL Copié dans le presse-papier ! \n\n${fullUrl}\n\nCollez cet URL dans votre Raccourci iOS.`);
+        }
+
+        // ==================== NAVIGATION & TABS ====================
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('text-ios-blue');
+                btn.classList.add('text-gray-400', 'dark:text-gray-500');
+            });
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('text-ios-blue');
+                activeBtn.classList.remove('text-gray-400', 'dark:text-gray-500');
+            }
+
+            if (tabId === 'budget') renderCategoryChart();
+            if (tabId === 'auto') renderFuelTrendChart();
+        }
+
+        function switchAutoSubTab(subTabId) {
+            document.querySelectorAll('.auto-subtab').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`subtab-${subTabId}`).classList.remove('hidden');
+
+            ['carburant', 'vidanges', 'pieces'].forEach(id => {
+                const btn = document.getElementById(`autotab-${id}-btn`);
+                if (id === subTabId) {
+                    btn.classList.add('bg-white', 'dark:bg-gray-700', 'shadow-sm', 'text-gray-900', 'dark:text-white');
+                    btn.classList.remove('text-gray-500');
+                } else {
+                    btn.classList.remove('bg-white', 'dark:bg-gray-700', 'shadow-sm', 'text-gray-900', 'dark:text-white');
+                    btn.classList.add('text-gray-500');
+                }
+            });
+
+            if (subTabId === 'carburant') renderFuelTrendChart();
+        }
+
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.add('hidden');
+        }
+
+        // ==================== ACCUEIL (DASHBOARD) RENDER ====================
+        function renderDashboard() {
+            // Calculate Total Income & Expense
+            let totalIncome = 0;
+            let totalExpense = 0;
+
+            appState.transactions.forEach(t => {
+                const amt = parseFloat(t.amount) || 0;
+                if (t.type === 'income') totalIncome += amt;
+                else totalExpense += amt;
+            });
+
+            const solde = totalIncome - totalExpense;
+
+            document.getElementById('dash-solde').textContent = `${solde.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} DH`;
+            document.getElementById('dash-revenus').textContent = `+${totalIncome.toLocaleString('fr-FR')} DH`;
+            document.getElementById('dash-depenses').textContent = `-${totalExpense.toLocaleString('fr-FR')} DH`;
+
+            // Car mini widget
+            document.getElementById('dash-car-name').textContent = appState.car.name;
+            document.getElementById('dash-car-km').textContent = `${appState.car.currentKm.toLocaleString('fr-FR')} km`;
+
+            // Conso Moyenne
+            const conso = calculateAverageConso();
+            document.getElementById('dash-car-conso').textContent = conso ? `${conso.toFixed(1)} L/100 km` : '-- L/100 km';
+
+            // Next Vidange calculation
+            const lastVidange = appState.vidanges[0];
+            if (lastVidange) {
+                const targetKm = lastVidange.km + lastVidange.nextIntervalKm;
+                const remainingKm = targetKm - appState.car.currentKm;
+                document.getElementById('dash-car-next-vidange').textContent = `${targetKm.toLocaleString('fr-FR')} km`;
+                document.getElementById('dash-vidange-remaining-text').textContent = `${remainingKm.toLocaleString('fr-FR')} km restants`;
+
+                const progressBar = document.getElementById('dash-vidange-progress-bar');
+                const percent = Math.max(0, Math.min(100, (remainingKm / lastVidange.nextIntervalKm) * 100));
+                progressBar.style.width = `${percent}%`;
+
+                if (remainingKm <= 0) {
+                    progressBar.className = "h-full bg-ios-red rounded-full transition-all duration-500";
+                    document.getElementById('dash-vidange-status-text').textContent = "Vidange DÉPASSÉE !";
+                    document.getElementById('dash-vidange-status-text').className = "text-ios-red font-bold";
+                } else if (remainingKm <= 1500) {
+                    progressBar.className = "h-full bg-ios-orange rounded-full transition-all duration-500";
+                    document.getElementById('dash-vidange-status-text').textContent = "Vidange Proche";
+                    document.getElementById('dash-vidange-status-text').className = "text-ios-orange font-bold";
+                } else {
+                    progressBar.className = "h-full bg-ios-green rounded-full transition-all duration-500";
+                    document.getElementById('dash-vidange-status-text').textContent = "Vidange OK";
+                    document.getElementById('dash-vidange-status-text').className = "text-gray-500";
+                }
+            }
+
+            // Recent 5 Transactions
+            const recentContainer = document.getElementById('dash-recent-list');
+            recentContainer.innerHTML = '';
+            const recent = [...appState.transactions].reverse().slice(0, 5);
+
+            if (recent.length === 0) {
+                recentContainer.innerHTML = `<p class="text-xs text-gray-400 text-center py-3">Aucune transaction enregistrée.</p>`;
+                return;
+            }
+
+            recent.forEach(t => {
+                const iconInfo = getCategoryIcon(t.category, t.type);
+                const isInc = t.type === 'income';
+
+                const html = `
+                    <div class="flex justify-between items-center py-1">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-full ${iconInfo.bg} ${iconInfo.color} flex items-center justify-center text-sm">
+                                <i class="${iconInfo.icon}"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xs text-gray-800 dark:text-gray-200">${escapeHtml(t.desc)}</h4>
+                                <span class="text-[10px] text-gray-400">${t.date} • ${t.category}</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-xs ${isInc ? 'text-emerald-500' : 'text-gray-800 dark:text-gray-200'}">
+                            ${isInc ? '+' : '-'}${parseFloat(t.amount).toLocaleString('fr-FR', {minimumFractionDigits: 2})} DH
+                        </span>
+                    </div>
+                `;
+                recentContainer.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        // ==================== BUDGET TAB RENDER ====================
+        function renderBudgetTab() {
+            let totalIncome = 0;
+            let totalExpense = 0;
+
+            appState.transactions.forEach(t => {
+                const amt = parseFloat(t.amount) || 0;
+                if (t.type === 'income') totalIncome += amt;
+                else totalExpense += amt;
+            });
+
+            document.getElementById('budget-total-income').textContent = `+${totalIncome.toLocaleString('fr-FR')} DH`;
+            document.getElementById('budget-total-expense').textContent = `-${totalExpense.toLocaleString('fr-FR')} DH`;
+            document.getElementById('budget-total-savings').textContent = `${(totalIncome - totalExpense).toLocaleString('fr-FR')} DH`;
+
+            renderTransactionsList();
+            renderCategoryChart();
+        }
+
+        function filterTransactions(type) {
+            currentFilterType = type;
+            ['all', 'expense', 'income'].forEach(t => {
+                const btn = document.getElementById(`filter-btn-${t}`);
+                if (t === type) {
+                    btn.classList.add('bg-white', 'dark:bg-gray-700', 'shadow-sm', 'text-gray-900', 'dark:text-white');
+                    btn.classList.remove('text-gray-500');
+                } else {
+                    btn.classList.remove('bg-white', 'dark:bg-gray-700', 'shadow-sm', 'text-gray-900', 'dark:text-white');
+                    btn.classList.add('text-gray-500');
+                }
+            });
+            renderTransactionsList();
+        }
+
+        function renderTransactionsList() {
+            const container = document.getElementById('full-transactions-list');
+            const search = document.getElementById('transaction-search').value.toLowerCase();
+            container.innerHTML = '';
+
+            let filtered = [...appState.transactions].reverse();
+
+            if (currentFilterType !== 'all') {
+                filtered = filtered.filter(t => t.type === currentFilterType);
+            }
+
+            if (search) {
+                filtered = filtered.filter(t => t.desc.toLowerCase().includes(search) || t.category.toLowerCase().includes(search));
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">Aucune transaction trouvée.</p>`;
+                return;
+            }
+
+            filtered.forEach(t => {
+                const iconInfo = getCategoryIcon(t.category, t.type);
+                const isInc = t.type === 'income';
+
+                const html = `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-800/50 last:border-0">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-full ${iconInfo.bg} ${iconInfo.color} flex items-center justify-center text-sm">
+                                <i class="${iconInfo.icon}"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xs text-gray-800 dark:text-gray-200">${escapeHtml(t.desc)}</h4>
+                                <span class="text-[10px] text-gray-400">${t.date} • ${t.category}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-xs ${isInc ? 'text-emerald-500' : 'text-gray-800 dark:text-gray-200'}">
+                                ${isInc ? '+' : '-'}${parseFloat(t.amount).toLocaleString('fr-FR', {minimumFractionDigits: 2})} DH
+                            </span>
+                            <button onclick="deleteTransaction('${t.id}')" class="text-gray-300 hover:text-rose-500 text-xs p-1">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function renderCategoryChart() {
+            const ctx = document.getElementById('categoryChart')?.getContext('2d');
+            if (!ctx) return;
+
+            const categoryTotals = {};
+            appState.transactions.filter(t => t.type === 'expense').forEach(t => {
+                categoryTotals[t.category] = (categoryTotals[t.category] || 0) + parseFloat(t.amount);
+            });
+
+            const labels = Object.keys(categoryTotals);
+            const data = Object.values(categoryTotals);
+
+            if (categoryChartInstance) categoryChartInstance.destroy();
+
+            categoryChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: ['#007AFF', '#FF9500', '#34C759', '#FF3B30', '#AF52DE', '#5AC8FA', '#FFCC00', '#8E8E93'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10 } } }
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        // ==================== AUTO TAB RENDER ====================
+        function renderAutoTab() {
+            document.getElementById('auto-vehicule-name').textContent = appState.car.name;
+            document.getElementById('auto-vehicule-km').textContent = `${appState.car.currentKm.toLocaleString('fr-FR')} km au compteur`;
+
+            renderFuelLogs();
+            renderVidangesLogs();
+            renderPiecesLogs();
+        }
+
+        function calculateAverageConso() {
+            if (appState.fuelLogs.length < 2) return null;
+            const sorted = [...appState.fuelLogs].sort((a, b) => a.km - b.km);
+
+            let totalKm = sorted[sorted.length - 1].km - sorted[0].km;
+            let totalLiters = sorted.slice(1).reduce((sum, f) => sum + parseFloat(f.liters), 0);
+
+            if (totalKm <= 0) return null;
+            return (totalLiters / totalKm) * 100;
+        }
+
+        function renderFuelLogs() {
+            const avgConso = calculateAverageConso();
+            document.getElementById('fuel-avg-conso').textContent = avgConso ? `${avgConso.toFixed(1)} L/100` : '-- L/100';
+
+            // Cost per km calculation
+            if (appState.fuelLogs.length >= 2) {
+                const sorted = [...appState.fuelLogs].sort((a, b) => a.km - b.km);
+                const totalKm = sorted[sorted.length - 1].km - sorted[0].km;
+                const totalCost = sorted.slice(1).reduce((sum, f) => sum + parseFloat(f.price), 0);
+                const costPerKm = totalKm > 0 ? (totalCost / totalKm) : 0;
+                document.getElementById('fuel-cost-per-km').textContent = `${costPerKm.toFixed(2)} DH/km`;
+            }
+
+            const container = document.getElementById('fuel-history-list');
+            container.innerHTML = '';
+
+            const sorted = [...appState.fuelLogs].reverse();
+            sorted.forEach(f => {
+                const html = `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-800/50 last:border-0">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/40 text-ios-blue flex items-center justify-center text-sm font-bold">
+                                <i class="fa-solid fa-gas-pump"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xs">${f.station || 'Station Service'} • ${f.km.toLocaleString('fr-FR')} km</h4>
+                                <span class="text-[10px] text-gray-400">${f.date} • ${f.liters} Litres</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-xs text-gray-800 dark:text-gray-200">${parseFloat(f.price).toLocaleString('fr-FR', {minimumFractionDigits: 2})} DH</span>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function renderFuelTrendChart() {
+            const ctx = document.getElementById('fuelTrendChart')?.getContext('2d');
+            if (!ctx) return;
+
+            const sorted = [...appState.fuelLogs].sort((a, b) => a.km - b.km);
+
+            const labels = [];
+            const data = [];
+
+            for (let i = 1; i < sorted.length; i++) {
+                const dist = sorted[i].km - sorted[i-1].km;
+                const conso = dist > 0 ? (sorted[i].liters / dist) * 100 : 0;
+                labels.push(sorted[i].date);
+                data.push(conso.toFixed(1));
+            }
+
+            if (fuelChartInstance) fuelChartInstance.destroy();
+
+            fuelChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels.length ? labels : ['Départ'],
+                    datasets: [{
+                        label: 'L/100 km',
+                        data: data.length ? data : [0],
+                        borderColor: '#007AFF',
+                        backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: false, ticks: { font: { size: 10 } } },
+                        x: { ticks: { font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function renderVidangesLogs() {
+            const lastVidange = appState.vidanges[0];
+            if (lastVidange) {
+                const targetKm = lastVidange.km + lastVidange.nextIntervalKm;
+                const remainingKm = targetKm - appState.car.currentKm;
+
+                document.getElementById('vidange-last-km').textContent = `${lastVidange.km.toLocaleString('fr-FR')} km`;
+                document.getElementById('vidange-target-km').textContent = `${targetKm.toLocaleString('fr-FR')} km`;
+                document.getElementById('vidange-remaining-badge').textContent = `${remainingKm.toLocaleString('fr-FR')} km`;
+
+                const bar = document.getElementById('vidange-bar');
+                const percent = Math.max(0, Math.min(100, (remainingKm / lastVidange.nextIntervalKm) * 100));
+                bar.style.width = `${percent}%`;
+
+                const alertBox = document.getElementById('vidange-alert-box');
+                const icon = document.getElementById('vidange-alert-icon');
+
+                if (remainingKm <= 0) {
+                    alertBox.className = "bg-rose-500/10 border border-rose-500/30 p-4 rounded-2xl space-y-2";
+                    icon.className = "fa-solid fa-triangle-exclamation text-rose-500 text-lg";
+                    document.getElementById('vidange-remaining-badge').className = "font-bold text-rose-600";
+                    bar.className = "h-full bg-rose-500 rounded-full transition-all duration-500";
+                } else if (remainingKm <= 1500) {
+                    alertBox.className = "bg-amber-500/10 border border-amber-500/30 p-4 rounded-2xl space-y-2";
+                    icon.className = "fa-solid fa-circle-exclamation text-amber-500 text-lg";
+                    document.getElementById('vidange-remaining-badge').className = "font-bold text-amber-600";
+                    bar.className = "h-full bg-amber-500 rounded-full transition-all duration-500";
+                } else {
+                    alertBox.className = "bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-2xl space-y-2";
+                    icon.className = "fa-solid fa-circle-check text-emerald-500 text-lg";
+                    document.getElementById('vidange-remaining-badge').className = "font-bold text-emerald-600";
+                    bar.className = "h-full bg-emerald-500 rounded-full transition-all duration-500";
+                }
+            }
+
+            const container = document.getElementById('vidanges-list');
+            container.innerHTML = '';
+
+            appState.vidanges.forEach(v => {
+                const filtersArr = [];
+                if (v.filters?.huile) filtersArr.push('Huile');
+                if (v.filters?.air) filtersArr.push('Air');
+                if (v.filters?.gasoil) filtersArr.push('Gasoil');
+                if (v.filters?.habitacle) filtersArr.push('Habitacle');
+
+                const html = `
+                    <div class="p-3 bg-gray-50 dark:bg-gray-800/60 rounded-2xl space-y-1">
+                        <div class="flex justify-between font-bold text-xs">
+                            <span>Vidange à ${v.km.toLocaleString('fr-FR')} km</span>
+                            <span class="text-ios-blue">${parseFloat(v.cost).toLocaleString('fr-FR')} DH</span>
+                        </div>
+                        <p class="text-[11px] text-gray-500">${v.oilType || 'Huile moteur'} • Date: ${v.date}</p>
+                        <p class="text-[10px] text-gray-400">Filtres: ${filtersArr.join(', ') || 'Aucun'}</p>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function renderPiecesLogs() {
+            let totalMaint = 0;
+            appState.pieces.forEach(p => totalMaint += parseFloat(p.cost));
+            document.getElementById('total-maintenance-cost').textContent = `${totalMaint.toLocaleString('fr-FR')} DH`;
+
+            const container = document.getElementById('pieces-list');
+            container.innerHTML = '';
+
+            if (appState.pieces.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 text-center py-3">Aucune pièce enregistrée.</p>`;
+                return;
+            }
+
+            appState.pieces.forEach(p => {
+                const html = `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-800/50 last:border-0">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-600 flex items-center justify-center text-sm">
+                                <i class="fa-solid fa-wrench"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xs">${escapeHtml(p.name)}</h4>
+                                <span class="text-[10px] text-gray-400">${p.date} • ${p.km ? p.km.toLocaleString('fr-FR') + ' km' : ''} ${p.notes ? '• ' + p.notes : ''}</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-xs text-rose-600 dark:text-rose-400">${parseFloat(p.cost).toLocaleString('fr-FR')} DH</span>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        // ==================== FORM ACTIONS & CREATION ====================
+        function openAddTransactionModal(type = 'expense') {
+            setTxType(type);
+            document.getElementById('tx-id').value = '';
+            document.getElementById('tx-amount').value = '';
+            document.getElementById('tx-desc').value = '';
+            document.getElementById('tx-date').value = new Date().toISOString().split('T')[0];
+            openModal('modal-transaction');
+        }
+
+        function setTxType(type) {
+            document.getElementById('tx-type').value = type;
+            const expBtn = document.getElementById('tx-type-expense-btn');
+            const incBtn = document.getElementById('tx-type-income-btn');
+
+            if (type === 'expense') {
+                expBtn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-gray-700 shadow-sm transition";
+                incBtn.className = "flex-1 py-1.5 text-xs font-bold text-gray-500 rounded-lg transition";
+            } else {
+                incBtn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-gray-700 shadow-sm transition";
+                expBtn.className = "flex-1 py-1.5 text-xs font-bold text-gray-500 rounded-lg transition";
+            }
+        }
+
+        function saveTransaction(e) {
+            e.preventDefault();
+            const id = document.getElementById('tx-id').value || `tx_${Date.now()}`;
+            const type = document.getElementById('tx-type').value;
+            const amount = parseFloat(document.getElementById('tx-amount').value);
+            const desc = document.getElementById('tx-desc').value;
+            const category = document.getElementById('tx-category').value;
+            const date = document.getElementById('tx-date').value;
+
+            const newTx = { id, type, amount, desc, category, date };
+
+            const existingIndex = appState.transactions.findIndex(t => t.id === id);
+            if (existingIndex >= 0) appState.transactions[existingIndex] = newTx;
+            else appState.transactions.push(newTx);
+
+            saveState();
+            closeModal('modal-transaction');
+        }
+
+        function deleteTransaction(id) {
+            appState.transactions = appState.transactions.filter(t => t.id !== id);
+            saveState();
+        }
+
+        function saveFuelFillup(e) {
+            e.preventDefault();
+            const km = parseInt(document.getElementById('fuel-km').value);
+            const liters = parseFloat(document.getElementById('fuel-liters').value);
+            const price = parseFloat(document.getElementById('fuel-price').value);
+            const station = document.getElementById('fuel-station').value || 'Station Service';
+            const date = document.getElementById('fuel-date').value;
+            const syncBudget = document.getElementById('fuel-sync-budget').checked;
+
+            const fuelEntry = { id: `f_${Date.now()}`, km, liters, price, station, date };
+            appState.fuelLogs.push(fuelEntry);
+
+            // Update car current KM if higher
+            if (km > appState.car.currentKm) appState.car.currentKm = km;
+
+            if (syncBudget) {
+                appState.transactions.push({
+                    id: `tx_${Date.now()}`,
+                    type: 'expense',
+                    amount: price,
+                    desc: `Plein Carburant (${station})`,
+                    category: 'Carburant',
+                    date: date
+                });
+            }
+
+            saveState();
+            closeModal('modal-add-fuel');
+        }
+
+        function saveVidange(e) {
+            e.preventDefault();
+            const km = parseInt(document.getElementById('vid-km').value);
+            const interval = parseInt(document.getElementById('vid-interval').value) || 10000;
+            const oilType = document.getElementById('vid-oil-type').value || 'Huile Moteur';
+            const cost = parseFloat(document.getElementById('vid-cost').value);
+            const date = document.getElementById('vid-date').value;
+            const syncBudget = document.getElementById('vid-sync-budget').checked;
+
+            const filters = {
+                huile: document.getElementById('vid-f-huile').checked,
+                air: document.getElementById('vid-f-air').checked,
+                gasoil: document.getElementById('vid-f-gasoil').checked,
+                habitacle: document.getElementById('vid-f-habitacle').checked
+            };
+
+            const entry = { id: `v_${Date.now()}`, km, nextIntervalKm: interval, oilType, cost, filters, date };
+            appState.vidanges.unshift(entry);
+
+            if (km > appState.car.currentKm) appState.car.currentKm = km;
+
+            if (syncBudget) {
+                appState.transactions.push({
+                    id: `tx_${Date.now()}`,
+                    type: 'expense',
+                    amount: cost,
+                    desc: `Vidange Huile ${oilType}`,
+                    category: 'Entretien Auto',
+                    date: date
+                });
+            }
+
+            saveState();
+            closeModal('modal-add-vidange');
+        }
+
+        function savePiece(e) {
+            e.preventDefault();
+            const name = document.getElementById('piece-name').value;
+            const category = document.getElementById('piece-category').value;
+            const cost = parseFloat(document.getElementById('piece-cost').value);
+            const km = parseInt(document.getElementById('piece-km').value) || appState.car.currentKm;
+            const date = document.getElementById('piece-date').value;
+            const notes = document.getElementById('piece-notes').value;
+            const syncBudget = document.getElementById('piece-sync-budget').checked;
+
+            appState.pieces.unshift({ id: `p_${Date.now()}`, name, category, cost, km, date, notes });
+
+            if (syncBudget) {
+                appState.transactions.push({
+                    id: `tx_${Date.now()}`,
+                    type: 'expense',
+                    amount: cost,
+                    desc: `${name} (${category})`,
+                    category: 'Entretien Auto',
+                    date: date
+                });
+            }
+
+            saveState();
+            closeModal('modal-add-piece');
+        }
+
+        function openEditCarModal() {
+            document.getElementById('edit-car-name').value = appState.car.name;
+            document.getElementById('edit-car-km').value = appState.car.currentKm;
+            openModal('modal-edit-car');
+        }
+
+        function saveCarInfo(e) {
+            e.preventDefault();
+            appState.car.name = document.getElementById('edit-car-name').value;
+            appState.car.currentKm = parseInt(document.getElementById('edit-car-km').value);
+            saveState();
+            closeModal('modal-edit-car');
+        }
+
+        // ==================== GEMINI AI RECEIPT SCANNER ====================
+        async function handleReceiptImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const previewImg = document.getElementById('scan-preview-img');
+            const previewContainer = document.getElementById('scan-preview-container');
+            const loading = document.getElementById('scan-loading');
+            const dropzone = document.getElementById('scan-dropzone');
+
+            dropzone.classList.add('hidden');
+            previewContainer.classList.remove('hidden');
+            loading.classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64Data = e.target.result.split(',')[1];
+                previewImg.src = e.target.result;
+
+                try {
+                    const result = await callGeminiAIReceiptScan(base64Data, file.type);
+                    loading.classList.add('hidden');
+
+                    if (result && result.montant) {
+                        closeModal('modal-scan');
+
+                        if (result.isFuel) {
+                            openModal('modal-add-fuel');
+                            document.getElementById('fuel-price').value = result.montant;
+                            if (result.litres) document.getElementById('fuel-liters').value = result.litres;
+                            if (result.commercant) document.getElementById('fuel-station').value = result.commercant;
+                        } else {
+                            openAddTransactionModal('expense');
+                            document.getElementById('tx-amount').value = result.montant;
+                            document.getElementById('tx-desc').value = result.commercant || 'Facture Scannée';
+                            if (result.categorie) document.getElementById('tx-category').value = result.categorie;
+                        }
+                    } else {
+                        alert("Facture lue avec succès, mais montant non détecté clairement.");
+                    }
+                } catch (err) {
+                    loading.classList.add('hidden');
+                    alert("Erreur lors de l'analyse AI de la facture. Veuillez entrer manuellement.");
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function callGeminiAIReceiptScan(base64Data, mimeType) {
+            const userKey = localStorage.getItem('custom_gemini_key') || "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-preview:generateContent?key=${userKey}`;
+
+            const promptText = `Analyse cette facture ou ticket de caisse en Dirham Marocain (DH/MAD).
+Extrais les informations sous format JSON strict avec les clés :
+- "montant" (nombre float)
+- "commercant" (nom du magasin/station)
+- "date" (format YYYY-MM-DD)
+- "categorie" (choisir parmi: Alimentation, Café/Resto, Carburant, Entretien Auto, Courses, Factures, Shopping, Santé, Autre)
+- "isFuel" (boolean: true si c'est un ticket d'essence/carburant)
+- "litres" (nombre float si visible, sinon null)`;
+
+            const payload = {
+                contents: [{
+                    role: "user",
+                    parts: [
+                        { text: promptText },
+                        { inlineData: { mimeType: mimeType || "image/png", data: base64Data } }
+                    ]
+                }],
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+            const textResult = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            return textResult ? JSON.parse(textResult) : null;
+        }
+
+        function saveApiKey() {
+            const val = document.getElementById('custom-api-key').value;
+            localStorage.setItem('custom_gemini_key', val);
+            alert("Clé API enregistrée !");
+        }
+
+        // ==================== DATA IMPORT / EXPORT ====================
+        function exportDataJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `Finance_Auto_Backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importDataJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported.transactions && imported.car) {
+                        appState = imported;
+                        saveState();
+                        alert("Données importées avec succès !");
+                    } else {
+                        alert("Format JSON invalide.");
+                    }
+                } catch (err) {
+                    alert("Fichier JSON corrompu.");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetToSampleData() {
+            if (confirm("Voulez-vous vraiment réinitialiser toutes les données avec les exemples par défaut ?")) {
+                appState = JSON.parse(JSON.stringify(DEFAULT_DATA));
+                saveState();
+            }
+        }
+
+        // ==================== UTILS & THEME ====================
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('theme-toggle-icon').className = isDark ? "fa-solid fa-sun text-amber-400" : "fa-solid fa-moon text-gray-600";
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            renderCategoryChart();
+            renderFuelTrendChart();
+        }
+
+        function initAppTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-toggle-icon').className = "fa-solid fa-sun text-amber-400";
+            }
+        }
+
+        function getCategoryIcon(category, type) {
+            if (type === 'income') {
+                return { icon: 'fa-solid fa-wallet', bg: 'bg-emerald-100 dark:bg-emerald-950/40', color: 'text-emerald-600 dark:text-emerald-400' };
+            }
+
+            switch(category) {
+                case 'Alimentation': return { icon: 'fa-solid fa-utensils', bg: 'bg-rose-100 dark:bg-rose-950/40', color: 'text-rose-600' };
+                case 'Café/Resto': return { icon: 'fa-solid fa-mug-hot', bg: 'bg-amber-100 dark:bg-amber-950/40', color: 'text-amber-600' };
+                case 'Carburant': return { icon: 'fa-solid fa-gas-pump', bg: 'bg-blue-100 dark:bg-blue-950/40', color: 'text-ios-blue' };
+                case 'Entretien Auto': return { icon: 'fa-solid fa-wrench', bg: 'bg-orange-100 dark:bg-orange-950/40', color: 'text-orange-600' };
+                case 'Courses': return { icon: 'fa-solid fa-cart-shopping', bg: 'bg-emerald-100 dark:bg-emerald-950/40', color: 'text-emerald-600' };
+                case 'Factures': return { icon: 'fa-solid fa-file-invoice-dollar', bg: 'bg-purple-100 dark:bg-purple-950/40', color: 'text-purple-600' };
+                case 'Shopping': return { icon: 'fa-solid fa-bag-shopping', bg: 'bg-pink-100 dark:bg-pink-950/40', color: 'text-pink-600' };
+                default: return { icon: 'fa-solid fa-layer-group', bg: 'bg-gray-100 dark:bg-gray-800', color: 'text-gray-600' };
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
